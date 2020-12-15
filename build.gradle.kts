@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("java-library")
+    id("maven-publish")
     id("com.github.johnrengelman.shadow") version("6.1.0")
 }
 
@@ -19,6 +20,26 @@ repositories {
     mavenCentral()
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("default") {
+            from(components["java"])
+            // Include any other artifacts here, like javadocs
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kadenscott/Agate")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
 dependencies {
     compileOnly("org.checkerframework:checker-qual:3.5.0")
     compileOnly("com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT")
@@ -29,5 +50,5 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT") {
         isTransitive = true
     }
-
 }
+
